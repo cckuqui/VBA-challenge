@@ -1,0 +1,136 @@
+Sub VBAChallenge()
+    
+    'Loop through all worksheets
+    For Each ws In Worksheets
+    
+        'Declare variables
+        Dim Tickers As String
+        
+        Dim Total As Double
+        Total = 0
+        
+        Dim BeginPrice As Double
+        BeginPrice = 0
+        
+        Dim ClosePrice As Double
+        ClosePrice = 0
+              
+        Dim CountInc As Integer
+        CountInc = 0
+            
+        Dim TotalTableRow As Integer
+        TotalTableRow = 2
+        
+        Dim OldRow As Integer
+        
+        Dim GreatestGrowth As Double
+        GreatestGrowth = 0
+        
+        Dim GreatestTicker As String
+        
+        Dim SmallestGrowth As Double
+        SmallestGrowth = 0
+        
+        Dim SmallestTicker As String
+        
+        Dim GreatestVolumen As Double
+        GreatestVolumen = 0
+        
+        Dim GreatestTickerVolumnen As String
+                                
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+        'Headers of table 1
+        ws.Range("J1").Value = "Ticker"
+        ws.Range("K1").Value = "Yearly Change"
+        ws.Range("L1").Value = "Percentage Change"
+        ws.Range("M1").Value = "Total Stock Volumen"
+        
+        'Headers of table 2
+        ws.Range("Q1").Value = "Ticker"
+        ws.Range("R1").Value = "Value"
+        ws.Range("P2").Value = "Greatest % Increase"
+        ws.Range("P3").Value = "Greatest % Decrease"
+        ws.Range("P4").Value = "Greatest Total Volumen"
+                
+        On Error Resume Next
+        
+        'Create both tables
+        For i = 2 To LastRow
+                  
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                    
+                    Tickers = ws.Cells(i, 1).Value
+                    Total = Total + ws.Cells(i, 7).Value
+                    BeginPrice = ws.Cells(i - CountInc, 3).Value
+                    ClosePrice = ws.Cells(i, 6).Value
+                    Diference = ClosePrice - BeginPrice
+                    Growth = (ClosePrice - BeginPrice) / BeginPrice
+                    
+                    'Print in table totals
+                    ws.Range("J" & TotalTableRow).Value = Tickers
+                    ws.Range("K" & TotalTableRow).Value = Diference
+                    ws.Range("L" & TotalTableRow).Value = FormatPercent(Growth)
+                    ws.Range("M" & TotalTableRow).Value = Total
+                        
+                        'Color change for Yearly Change Value
+                        If Diference >= 0 Then
+                            
+                                ws.Range("K" & TotalTableRow).Interior.ColorIndex = 4
+                            
+                            Else
+                                
+                                ws.Range("K" & TotalTableRow).Interior.ColorIndex = 3
+                                        
+                        End If
+                        
+                        'Greatest Growth
+                        If GreatestGrowth < Growth Then
+                        
+                             GreatestGrowth = Growth
+                             GreatestTicker = Tickers
+                             
+                             ws.Range("R2").Value = FormatPercent(GreatestGrowth)
+                             ws.Range("Q2").Value = GreatestTicker
+                                                     
+                        End If
+                                                        
+                        'Smallest Growth
+                        If SmallestGrowth > Growth Then
+                        
+                             SmallestGrowth = Growth
+                             SmallestTicker = Tickers
+                             
+                             ws.Range("R3").Value = FormatPercent(SmallestGrowth)
+                             ws.Range("Q3").Value = SmallestTicker
+                                                     
+                        End If
+                        
+                        'Greatest Volumen
+                        If GreatestVolumen < Total Then
+                        
+                             GreatestVolumen = Total
+                             GreatestTickerVolumen = Tickers
+                             
+                             ws.Range("R4").Value = GreatestVolumen
+                             ws.Range("Q4").Value = GreatestTickerVolumen
+                                                     
+                        End If
+                                              
+                    'Put everything back to 0
+                    TotalTableRow = TotalTableRow + 1
+                    Total = 0
+                    CountInc = 0
+                
+                Else
+                
+                    Total = Total + ws.Cells(i, 7).Value
+                    CountInc = CountInc + 1
+            
+            End If
+    
+        Next i
+
+    Next ws
+    
+End Sub
