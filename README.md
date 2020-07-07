@@ -1,2 +1,1 @@
-# VBA-challenge
-Cris' homework for week 2
+# VBA-exercise
